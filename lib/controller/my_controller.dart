@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_proj/model/ticker_data_view_model.dart';
 import 'package:flutter_proj/model/ticker_list_view_model.dart';
 import 'package:flutter_proj/repository/my_repository.dart';
@@ -11,12 +12,15 @@ class MyController extends GetxController {
   final String errorMessage = "An error has occurred";
   RxList<TickerDataViewModel> tickers = <TickerDataViewModel>[].obs;
 
-  // RxList<Map<String, dynamic>> foundTickers = RxList<Map<String, dynamic>>();
+  //for pagination
+  ScrollController scrollController = ScrollController();
+  var isMoreDataAvailable = true.obs;
+  var page = " ";
 
-  Future<void> getAllTickers() async {
+  Future<void> getAllTickers(String value) async {
     isLoadingGetAllTickers(true);
     final Either<String, TickerListViewModel> resultOrException =
-        await _repository.getAllTickers();
+        await _repository.getAllTickers(value);
     resultOrException.fold((left) {
       isLoadingGetAllTickers(false);
       hasError(true);
@@ -29,36 +33,43 @@ class MyController extends GetxController {
   Future<void> onRefresh() async {
     hasError(false);
     tickers.clear();
-    await getAllTickers();
+    await getAllTickers("");
   }
 
   @override
   void onInit() {
-    getAllTickers();
     super.onInit();
+    getAllTickers(page);
+    paginationTask();
+
     // foundTickers.value = tickers as List<Map<String, dynamic>>;
   }
 
-  // void filterTicker(String tickerName) {
-  //   List<Map<String, dynamic>> results = [];
-  //   if (tickerName.isEmpty) {
-  //     results = tickers as List<Map<String, dynamic>>;
-  //   } else {
-  //     results = tickers
-  //         .where((element) => element['name']
-  //             .toString()
-  //             .toLowerCase()
-  //             .contains(tickerName, toLowerCase()))
-  //         .cast<Map<String, dynamic>>()
-  //         .toList();
-  //   }
-  // }
-  // MyController get _controller => Get.find<MyController>();
-  //
-  // Future<List<TickerDataViewModel>> search(String search) async{
-  //   await Future.delayed(Duration(seconds: 2));
-  //   return List.generate(search.length, (int index) {
-  //     return TickerDataViewModel(id: _controller.tickers[index].id, name: _controller.tickers[index].name );
-  //   });
-  // }
+  void paginationTask() {
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        print("reached end");
+        page = _controller.tickers[tickers.length - 1].id!;
+        print(_controller.tickers[tickers.length - 1].id!);
+        getMoreTickers(page);
+      }
+    });
+  }
+
+  void getMoreTickers(String value) {
+    try {
+      MyRepository().getAllTickers(value).then((resp) {
+        if (resp.length != 0) {
+          isMoreDataAvailable(true);
+        } else {
+          isMoreDataAvailable(false);
+        }
+      });
+    } catch (exception) {
+      isMoreDataAvailable(false);
+    }
+  }
+
+  MyController get _controller => Get.find<MyController>();
 }

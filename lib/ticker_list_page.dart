@@ -35,6 +35,7 @@ class TickerListPage extends StatelessWidget {
       child: Stack(
         children: [
           ListView.builder(
+              controller: _controller.scrollController,
               itemCount: _controller.tickers.length,
               itemBuilder: (context, index) => Container(
                     width: double.infinity,
@@ -62,25 +63,6 @@ class TickerListPage extends StatelessWidget {
                         )
                       ],
                     ),
-
-                    // Row(
-                    //   children: [
-                    //     _controller.tickers[index].logo_url != null
-                    //         ? CircleAvatar(
-                    //             child: Image.network(
-                    //                 _controller.tickers[index].logo_url!),
-                    //           )
-                    //         : CircleAvatar(
-                    //             child: Text(
-                    //               "No Image",
-                    //               style: TextStyle(
-                    //                 fontSize: 5,
-                    //               ),
-                    //             ),
-                    //           ),
-                    //
-                    //   ],
-                    // )
                   )),
           if (_controller.hasError.isTrue)
             Center(
