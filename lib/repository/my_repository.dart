@@ -12,8 +12,8 @@ class MyRepository {
   static String _url =
       "https://ticker-service-w3zz3dng3q-uc.a.run.app/ticker_id/?stocks=";
 
-  var tickers = List<dynamic>.empty(growable: true).obs;
-  // final TickerListViewModel tickers =[];
+  // var tickers = List<dynamic>.empty(growable: true).obs;
+  TickerListViewModel tickers = TickerListViewModel(tickersData: []);
   MyRepository(
       // String initialTicker
       ) {
@@ -25,8 +25,7 @@ class MyRepository {
       String value) async {
     try {
       final response = await _dio.get(_url + value);
-      final TickerListViewModel tickers =
-          TickerListViewModel.fromJson(response.data);
+      tickers = TickerListViewModel.fromJson(response.data);
       return Right(tickers);
     } catch (dioError) {
       return Left(dioError.toString());

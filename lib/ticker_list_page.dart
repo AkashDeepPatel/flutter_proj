@@ -34,36 +34,39 @@ class TickerListPage extends StatelessWidget {
       onRefresh: _controller.onRefresh,
       child: Stack(
         children: [
-          ListView.builder(
-              controller: _controller.scrollController,
-              itemCount: _controller.tickers.length,
-              itemBuilder: (context, index) => Container(
-                    width: double.infinity,
-                    height: 75,
-                    padding: EdgeInsets.all(4),
-                    margin: EdgeInsets.only(top: 2),
-                    decoration: BoxDecoration(
-                        color: Colors.blueAccent,
-                        borderRadius: BorderRadius.circular(6)),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _controller.tickers[index].id!,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
+          Obx(
+            () => ListView.builder(
+                controller: _controller.scrollController,
+                itemCount: _controller.tickers.length,
+                itemBuilder: (context, index) => Container(
+                      width: double.infinity,
+                      height: 75,
+                      padding: EdgeInsets.all(4),
+                      margin: EdgeInsets.only(top: 2),
+                      decoration: BoxDecoration(
+                          color: Colors.blueAccent,
+                          borderRadius: BorderRadius.circular(6)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _controller.tickers[index].id!,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                        Text(
-                          _controller.tickers[index].name!,
-                          style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.w500),
-                        )
-                      ],
-                    ),
-                  )),
+                          Text(
+                            _controller.tickers[index].name!,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500),
+                          )
+                        ],
+                      ),
+                    )),
+          ),
           if (_controller.hasError.isTrue)
             Center(
                 child: Column(

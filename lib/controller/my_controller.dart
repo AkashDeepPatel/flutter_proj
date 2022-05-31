@@ -17,7 +17,7 @@ class MyController extends GetxController {
   var isMoreDataAvailable = true.obs;
   var page = " ";
 
-  Future<void> getAllTickers(String value) async {
+  Future<void> getAllTickersA(String value) async {
     isLoadingGetAllTickers(true);
     final Either<String, TickerListViewModel> resultOrException =
         await _repository.getAllTickers(value);
@@ -26,20 +26,22 @@ class MyController extends GetxController {
       hasError(true);
     }, (data) {
       isLoadingGetAllTickers(false);
-      tickers(data.tickersData);
+      // tickers(data.tickersData);
+      tickers.addAll(data.tickersData!);
+      // debugPrint(tickers.va);
     });
   }
 
   Future<void> onRefresh() async {
     hasError(false);
     tickers.clear();
-    await getAllTickers("");
+    await getAllTickersA("");
   }
 
   @override
   void onInit() {
     super.onInit();
-    getAllTickers(page);
+    getAllTickersA(page);
     paginationTask();
 
     // foundTickers.value = tickers as List<Map<String, dynamic>>;
@@ -52,24 +54,27 @@ class MyController extends GetxController {
         print("reached end");
         page = _controller.tickers[tickers.length - 1].id!;
         print(_controller.tickers[tickers.length - 1].id!);
-        getMoreTickers(page);
+        getAllTickersA(page);
       }
     });
   }
 
-  void getMoreTickers(String value) {
-    try {
-      MyRepository().getAllTickers(value).then((resp) {
-        if (resp.length != 0) {
-          isMoreDataAvailable(true);
-        } else {
-          isMoreDataAvailable(false);
-        }
-      });
-    } catch (exception) {
-      isMoreDataAvailable(false);
-    }
-  }
+  // void getMoreTickers(String value) {
+  //   try {
+  //     MyRepository().getAllTickers(value).then((resp) {
+  //       if (resp.length() > 0) {
+  //         isMoreDataAvailable(true);
+  //         print("true");
+  //       } else {
+  //         isMoreDataAvailable(false);
+  //         print('no more items');
+  //       }
+  //     });
+  //   } catch (exception) {
+  //     isMoreDataAvailable(false);
+  //     print('exception ${exception.toString()}');
+  //   }
+  // }
 
   MyController get _controller => Get.find<MyController>();
 }
